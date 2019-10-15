@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Prompt } from "react-router-dom";
 import { IProduct, products } from "./ProductData";
 
 type Props = RouteComponentProps<{ id: string }>;
@@ -24,6 +24,10 @@ class ProductPage extends Component<Props, State> {
     const { product } = this.state;
     return (
       <div className="page-container">
+        <Prompt
+          when={!this.state.added}
+          message="Are you sure you leave without buying this product"
+        />
         {product ? (
           <>
             <h1>{product.name}</h1>

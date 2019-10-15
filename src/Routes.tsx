@@ -13,7 +13,7 @@ import NotFoundPage from "./NotFoundPage";
 import LoginPage from "./LoginPage";
 
 const Routes: React.FC = () => {
-  const [loggedIn] = React.useState(false);
+  const [loggedIn] = React.useState(true);
   return (
     <Router>
       <div>
