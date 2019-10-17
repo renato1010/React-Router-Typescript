@@ -1,14 +1,18 @@
 import React from "react";
 import { IProduct } from "./ProductData";
 import Tabs from "./Tabs";
+import withLoader from "./withLoader";
 
 interface IProps {
-  product: IProduct;
+  product?: IProduct;
   inBasket: boolean;
   onAddToBasket: () => void;
 }
 
 const Product: React.FC<IProps> = props => {
+  if (!props.product) {
+    return null;
+  }
   const {
     product: { name, description, price, reviews },
     inBasket: added,
@@ -46,4 +50,4 @@ const Product: React.FC<IProps> = props => {
   );
 };
 
-export default Product;
+export default withLoader(Product);

@@ -59,3 +59,12 @@ export const products: IProduct[] = [
     ]
   }
 ];
+
+export const getProduct = async (id: number): Promise<IProduct | null> => {
+  await wait(1000);
+  return products.find(prod => prod.id === id) || null;
+};
+
+const wait = (ms: number): Promise<void> => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
