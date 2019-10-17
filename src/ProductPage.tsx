@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { RouteComponentProps, Prompt } from "react-router-dom";
 import { IProduct, products } from "./ProductData";
+import Product from "./Product";
 
 type Props = RouteComponentProps<{ id: string }>;
 type State = { product?: IProduct; added: boolean };
@@ -29,19 +30,11 @@ class ProductPage extends Component<Props, State> {
           message="Are you sure you leave without buying this product"
         />
         {product ? (
-          <>
-            <h1>{product.name}</h1>
-            <p>{product.description}</p>
-            <p className="product-price">
-              {new Intl.NumberFormat("en-US", {
-                currency: "USD",
-                style: "currency"
-              }).format(product.price)}
-            </p>
-            {!this.state.added && (
-              <button onClick={this.handleAddClick}>Add to Basket</button>
-            )}
-          </>
+          <Product
+            product={product}
+            inBasket={this.state.added}
+            onAddToBasket={this.handleAddClick}
+          />
         ) : (
           <p>Product not found!</p>
         )}
