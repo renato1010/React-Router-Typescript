@@ -47,7 +47,7 @@ export class Form extends React.Component<FormProps, FormState> {
       }
     };
     const editorReducer = (
-      type: string | undefined,
+      type: "Text" | "Email" | "Select" | "TextArea",
       ctx: TFormContext
     ): JSX.Element => {
       switch (type) {
@@ -97,7 +97,7 @@ export class Form extends React.Component<FormProps, FormState> {
         {context => (
           <div className="form-group">
             <label htmlFor={name}>{label}</label>
-            {editorReducer(type, context)}
+            {!!type && editorReducer(type, context)}
           </div>
         )}
       </FormContext.Consumer>
