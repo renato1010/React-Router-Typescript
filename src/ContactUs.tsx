@@ -1,9 +1,18 @@
 import React from "react";
-import { Form, minLength, required } from "./Form";
+import { Form, minLength, required, SubmitResult, Values } from "./Form";
 
-const ContactUs: React.FC<{}> = () => {
+type Props = {
+  onSubmit: (values: Values) => Promise<SubmitResult>;
+};
+
+const ContactUs: React.FC<Props> = props => {
+  const handleSubmit = async (values: Values): Promise<SubmitResult> => {
+    const result = await props.onSubmit(values);
+    return result;
+  };
   return (
     <Form
+      onSubmit={handleSubmit}
       defaultValues={{ name: "", email: "", reason: "Support", notes: "" }}
       validationRules={{
         email: { validator: required },

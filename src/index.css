@@ -190,3 +190,17 @@ textarea {
   margin: 3px auto 0px 0px;
   border: solid 1px rgba(250, 153, 226, 0.486);
 }
+.form-group button {
+  font-size: 16px;
+  padding: 8px 5px;
+  width: 80px;
+  border: black solid 1px;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+}
+.form-group button:disabled {
+  border: gray solid 1px;
+  background-color: gray;
+  cursor: not-allowed;
+}

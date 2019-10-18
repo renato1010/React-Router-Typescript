@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent } from "react";
+import React, { ChangeEvent, FocusEvent, FormEvent } from "react";
 
 type FieldNames = "name" | "email" | "reason" | "notes";
 
@@ -70,12 +70,24 @@ type Errors = {
   [Key in FieldNames]?: string[];
 };
 
+/* Submit */
+export type SubmitResult = {
+  success: boolean;
+  errors?: Errors;
+};
+
 type FormProps = {
   defaultValues: Values;
   validationRules: ValidationProp;
+  onSubmit: (values: Values) => Promise<SubmitResult>;
 };
 
-type FormState = { values: Values; errors: Errors };
+type FormState = {
+  values: Values;
+  errors: Errors;
+  submitting: boolean;
+  submitted: boolean;
+};
 
 const FormContext = React.createContext<TFormContext>({
   values: { name: "", email: "", notes: "", reason: "Support" },
@@ -89,7 +101,12 @@ export class Form extends React.Component<FormProps, FormState> {
     Object.keys(props.defaultValues).forEach(fn => {
       errors[fn as FieldNames] = [];
     });
-    this.state = { values: this.props.defaultValues, errors };
+    this.state = {
+      values: this.props.defaultValues,
+      errors,
+      submitting: false,
+      submitted: false
+    };
   }
 
   static Field: React.FC<FieldProps> = props => {
@@ -121,14 +138,18 @@ export class Form extends React.Component<FormProps, FormState> {
       ctx: TFormContext
     ): JSX.Element => {
       const renderError = (): JSX.Element | JSX.Element[] | null => {
-        if (!(ctx.errors[name] as string[]).length) {
+        if (!Object.values(ctx.errors).flat().length) {
           return null;
         }
-        return (ctx.errors[name] as string[]).map(error => (
-          <span key={error} className="form-error">
-            {error}
-          </span>
-        ));
+        if (ctx.errors[name] as string[]) {
+          return (ctx.errors[name] as string[]).map(error => (
+            <span key={error} className="form-error">
+              {error}
+            </span>
+          ));
+        } else {
+          return null;
+        }
       };
       switch (type) {
         case "Text" || "Email": {
@@ -203,9 +224,6 @@ export class Form extends React.Component<FormProps, FormState> {
       </FormContext.Consumer>
     );
   };
-  componentDidUpdate() {
-    console.log("State: ", JSON.stringify(this.state, null, 2));
-  }
 
   private validate = (fieldName: FieldNames, value: any): string[] => {
     const rules = this.props.validationRules[fieldName];
@@ -225,12 +243,18 @@ export class Form extends React.Component<FormProps, FormState> {
         }
         return [...acc, currentError];
       }, []);
-      errors = ruleErrors;
+      errors = [...errors, ...ruleErrors];
     } else {
-      errors = [
-        ...errors,
-        rules["validator"](fieldName, this.state.values, rules["arg"])
-      ];
+      const _error = rules["validator"](
+        fieldName,
+        this.state.values,
+        rules["arg"]
+      );
+      if (!_error) {
+        errors = [...errors];
+      } else {
+        errors = [...errors, _error];
+      }
     }
     const newErrors = { ...this.state.errors, [fieldName]: errors };
     this.setState<"errors">((prevState, props) => ({ errors: newErrors }));
@@ -241,6 +265,22 @@ export class Form extends React.Component<FormProps, FormState> {
     const newValues = { ...this.state.values, [fieldName]: value };
     this.setState({ values: newValues });
   };
+  private hasErrors = (): boolean => {
+    const allErrors = Object.values(this.state.errors).flat() as string[];
+    return allErrors.length > 0;
+  };
+  private handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!this.hasErrors()) {
+      this.setState({ submitting: true });
+      const result = await this.props.onSubmit(this.state.values);
+      this.setState({
+        errors: result.errors || {},
+        submitted: result.success,
+        submitting: false
+      });
+    }
+  };
   render() {
     const context: TFormContext = {
       values: this.state.values,
@@ -250,8 +290,20 @@ export class Form extends React.Component<FormProps, FormState> {
     };
     return (
       <FormContext.Provider value={context}>
-        <form className="form" noValidate>
+        <form onSubmit={this.handleSubmit} className="form" noValidate>
           {this.props.children}
+          <div className="form-group">
+            <button
+              disabled={
+                this.state.submitted ||
+                this.state.submitting ||
+                this.hasErrors()
+              }
+              type="submit"
+            >
+              Submit
+            </button>
+          </div>
         </form>
       </FormContext.Provider>
     );
