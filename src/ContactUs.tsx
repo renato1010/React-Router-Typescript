@@ -1,9 +1,15 @@
 import React from "react";
-import { Form } from "./Form";
+import { Form, minLength, required } from "./Form";
 
 const ContactUs: React.FC<{}> = () => {
   return (
-    <Form defaultValues={{ name: "", email: "", reason: "Support", notes: "" }}>
+    <Form
+      defaultValues={{ name: "", email: "", reason: "Support", notes: "" }}
+      validationRules={{
+        email: { validator: required },
+        name: [{ validator: required }, { validator: minLength, arg: 3 }]
+      }}
+    >
       <Form.Field name="name" label="Your Name" />
       <Form.Field name="email" label="Your email address" type="Email" />
       <Form.Field
