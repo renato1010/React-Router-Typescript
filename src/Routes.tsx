@@ -12,6 +12,7 @@ import Header from "./Header";
 import ProductPage from "./ProductPage";
 import NotFoundPage from "./NotFoundPage";
 import LoginPage from "./LoginPage";
+import ContactUsPage from "./ContactUsPage";
 
 const AdminPage = React.lazy(() => import("./AdminPage"));
 
@@ -32,8 +33,9 @@ const Routes: React.FC<RouteComponentProps> = ({ location }) => {
         <CSSTransition key={location.key} timeout={200} classNames="animate">
           <Switch>
             <Redirect exact from="/" to="/products" />
-            <Route exact path="/products" component={ProductsPage} />
             <Route path="/products/:id" component={ProductPage} />
+            <Route exact path="/products" component={ProductsPage} />
+            <Route path="/contactus" component={ContactUsPage} />
             <Route path="/login" component={LoginPage} />
             <Route
               path="/admin"
