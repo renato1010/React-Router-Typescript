@@ -257,7 +257,7 @@ export class Form extends React.Component<FormProps, FormState> {
       }
     }
     const newErrors = { ...this.state.errors, [fieldName]: errors };
-    this.setState<"errors">((prevState, props) => ({ errors: newErrors }));
+    this.setState<"errors">(_ => ({ errors: newErrors }));
     return errors;
   };
 
