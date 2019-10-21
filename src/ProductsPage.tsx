@@ -1,32 +1,28 @@
 import React, { Component } from "react";
-import { IProduct, products } from "./ProductData";
+import { connect } from "react-redux";
+import { IProduct } from "./ProductsData";
 import { Link, RouteComponentProps } from "react-router-dom";
+import { IApplicationState } from "./Store";
+import { getProducts } from "./ProductsActions";
 
-type State = {
+interface Props extends RouteComponentProps {
+  getProducts: typeof getProducts;
+  loading: boolean;
   products: IProduct[];
-  search: string;
-};
-
-interface Props {
-  [key: string]: any;
 }
 
-class ProductsPage extends Component<RouteComponentProps, State> {
-  state: State = {
-    products: [],
-    search: ""
-  };
-  componentDidMount() {
-    this.setState({ products });
+class ProductsPage extends Component<Props> {
+  async componentDidMount() {
+    this.props.getProducts();
   }
   render() {
     const {
       location: { search: param }
     } = this.props;
-    const query = new URLSearchParams(param).get("search") || null;
-    const sProduct = query
-      ? products.find(product =>
-          product.name.toLowerCase().includes(query.toLowerCase())
+    const search = new URLSearchParams(param).get("search");
+    const sProduct = search
+      ? this.props.products.find(prod =>
+          prod.name.toLowerCase().includes(search)
         )
       : null;
     return (
@@ -36,7 +32,7 @@ class ProductsPage extends Component<RouteComponentProps, State> {
         </p>
         <ul className="product-list">
           {!sProduct ? (
-            this.state.products.map(product => (
+            this.props.products.map(product => (
               <li key={product.id} className="product-list-item">
                 <Link to={`/products/${product.id}`}>{product.name}</Link>
               </li>
@@ -51,5 +47,18 @@ class ProductsPage extends Component<RouteComponentProps, State> {
     );
   }
 }
-
-export default ProductsPage;
+const mapStateToProps = (store: IApplicationState) => {
+  return {
+    loading: store.products.productsLoading,
+    products: store.products.products
+  };
+};
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getProducts: () => dispatch(getProducts())
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProductsPage);

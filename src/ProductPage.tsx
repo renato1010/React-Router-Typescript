@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { RouteComponentProps, Prompt } from "react-router-dom";
-import { IProduct, getProduct } from "./ProductData";
+import { IProduct, getProduct } from "./ProductsData";
 import Product from "./Product";
+
 
 type Props = RouteComponentProps<{ id: string }>;
 type State = {

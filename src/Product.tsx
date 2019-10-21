@@ -1,5 +1,5 @@
 import React from "react";
-import { IProduct } from "./ProductData";
+import { IProduct } from "./ProductsData";
 import Tabs from "./Tabs";
 import withLoader from "./withLoader";
 
