@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { IProduct } from "./ProductsData";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { IProduct, products } from "./ProductsData";
+import { RouteComponentProps } from "react-router-dom";
 import { IApplicationState } from "./Store";
 import { getProducts } from "./ProductsActions";
+import ProductsList from "./ProductsList";
 
 interface Props extends RouteComponentProps {
   getProducts: typeof getProducts;
@@ -30,19 +31,12 @@ class ProductsPage extends Component<Props> {
         <p>
           Welcome to React Shop where you can get all your tools for ReactJS
         </p>
-        <ul className="product-list">
-          {!sProduct ? (
-            this.props.products.map(product => (
-              <li key={product.id} className="product-list-item">
-                <Link to={`/products/${product.id}`}>{product.name}</Link>
-              </li>
-            ))
-          ) : (
-            <li key={sProduct.id} className="product-list-item">
-              <Link to={`/products/${sProduct.id}`}>{sProduct.name}</Link>
-            </li>
-          )}
-        </ul>
+        <ProductsList
+          sProduct={sProduct && null}
+          search={search}
+          products={products}
+          loading={this.props.loading}
+        />
       </div>
     );
   }
