@@ -1,9 +1,14 @@
 import React, { ChangeEvent, KeyboardEvent } from "react";
 import { NavLink, RouteComponentProps, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { IApplicationState } from "./Store";
 import logo from "./logo.svg";
+import BasketSummary from "./BasketSummary";
 
-const Header: React.FC<RouteComponentProps> = props => {
-  const { location, history } = props;
+type Props = RouteComponentProps & { basketCount: number };
+
+const Header: React.FC<Props> = props => {
+  const { location, history, basketCount } = props;
   const [search, setSearch] = React.useState("");
   React.useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -28,6 +33,7 @@ const Header: React.FC<RouteComponentProps> = props => {
           onChange={handleSearchChange}
           onKeyDown={handleSearchKeydown}
         />
+        <BasketSummary count={basketCount} />
       </div>
       <img src={logo} alt="logo" className="header-logo" />
       <h1 className="header-title">React Shop</h1>
@@ -58,4 +64,10 @@ const Header: React.FC<RouteComponentProps> = props => {
   );
 };
 
-export default withRouter(Header);
+const mapStateToProps = (store: IApplicationState) => {
+  return {
+    basketCount: store.basket.products.length
+  };
+};
+
+export default connect(mapStateToProps)(withRouter(Header));
