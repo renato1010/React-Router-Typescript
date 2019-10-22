@@ -10,7 +10,11 @@ class ContactUsPage extends React.Component<{}, {}> {
   private handleSubmit = async (values: Values): Promise<SubmitResult> => {
     await wait(1000);
     return {
-      success: true
+      success: false,
+      errors: {
+        name: ["This should be populated"],
+        email: ["this should be populated"]
+      }
     };
   };
   render() {
