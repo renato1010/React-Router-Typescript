@@ -294,11 +294,7 @@ export class Form extends React.Component<FormProps, FormState> {
           {this.props.children}
           <div className="form-group">
             <button
-              disabled={
-                this.state.submitted ||
-                this.state.submitting ||
-                this.hasErrors()
-              }
+              disabled={this.state.submitted || this.state.submitting}
               type="submit"
             >
               Submit
